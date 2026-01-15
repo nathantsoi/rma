@@ -166,14 +166,21 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
 
     # export policy to onnx/jit
     export_model_dir = os.path.join(os.path.dirname(resume_path), "exported")
-    export_policy_as_jit(policy_nn, normalizer=normalizer, path=export_model_dir, filename="policy.pt")
-    export_policy_as_onnx(policy_nn, normalizer=normalizer, path=export_model_dir, filename="policy.onnx")
+    # export_policy_as_jit(policy_nn, normalizer=normalizer, path=export_model_dir, filename="policy.pt")
+    # export_policy_as_onnx(policy_nn, normalizer=normalizer, path=export_model_dir, filename="policy.onnx")
 
     dt = env.unwrapped.step_dt
 
     # reset environment
     obs = env.get_observations()
+
+    import pdb; pdb.set_trace()
+
     timestep = 0
+
+    import onnxruntime as ort
+    inference_session = ort.InferenceSession("/home/pranavrao87/rma/scripts/logs/rma/spot_rma/exported/2026-01-13_20-35-24/Vision_RMA/runs/pjdkt9mf/model_12000_deployment/model_12000.onnx")
+
     # simulate environment
     while simulation_app.is_running():
         start_time = time.time()

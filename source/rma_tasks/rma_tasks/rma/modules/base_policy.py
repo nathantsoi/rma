@@ -60,6 +60,7 @@ class BasePolicy(nn.Module):
         
         
         # encoder --> put priv_obs through MLP to get z_size(8 according to paper)
+        self.z_size = z_size
         self.encoder = MLP(num_env_obs, z_size, encoder_hidden_dims, activation)
         # encoder observation normalization
         self.encoder_obs_normalization = encoder_obs_normalization
