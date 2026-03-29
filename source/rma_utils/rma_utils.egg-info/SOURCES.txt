@@ -1,5 +1,7 @@
 pyproject.toml
 setup.py
+rma_utils/exports.py
+rma_utils/wandb_utils.py
 rma_utils.egg-info/PKG-INFO
 rma_utils.egg-info/SOURCES.txt
 rma_utils.egg-info/dependency_links.txt

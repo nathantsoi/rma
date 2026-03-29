@@ -1,5 +1,6 @@
 pyproject.toml
 setup.py
+rma_tasks/__init__.py
 rma_tasks.egg-info/PKG-INFO
 rma_tasks.egg-info/SOURCES.txt
 rma_tasks.egg-info/dependency_links.txt

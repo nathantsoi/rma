@@ -175,6 +175,10 @@ class BasePolicyRunner:
         if self.log_dir is not None and not self.disable_logs:
             self.save(os.path.join(self.log_dir, f"model_{self.current_learning_iteration}.pt"))
 
+            if self.logger_type in ["wandb"]:
+                self.writer.flush_scalars()
+                self.writer.stop()
+
     def log(self, locs: dict, width: int = 80, pad: int = 35):
         # Compute the collection size
         collection_size = self.num_steps_per_env * self.env.num_envs * self.gpu_world_size
@@ -222,10 +226,6 @@ class BasePolicyRunner:
         self.writer.add_scalar("Perf/collection time", locs["collection_time"], locs["it"])
         self.writer.add_scalar("Perf/learning_time", locs["learn_time"], locs["it"])
 
-        # callback for video logging
-        if self.logger_type in ["wandb"]:
-            self.writer.callback(locs["it"])
-
         # -- Training
         if len(locs["rewbuffer"]) > 0:
             # separate logging for intrinsic and extrinsic rewards
@@ -242,7 +242,11 @@ class BasePolicyRunner:
                     "Train/mean_episode_length/time", statistics.mean(locs["lenbuffer"]), self.tot_time
                 )
 
-        str = f" \033[1m Learning iteration {locs['it']}/{locs['tot_iter']} \033[0m "
+        # callback for video logging
+        if self.logger_type in ["wandb"]:
+            self.writer.callback(locs["it"])
+
+        str = f" \033[1m Learning iteration {locs['it'] + 1}/{locs['tot_iter']} \033[0m "
 
         if len(locs["rewbuffer"]) > 0:
             log_string = (
