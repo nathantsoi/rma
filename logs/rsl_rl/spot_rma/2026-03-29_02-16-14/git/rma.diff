@@ -1,0 +1,96 @@
+--- git status ---
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   scripts/__pycache__/cli_args.cpython-311.pyc
+	modified:   source/rma_mdp/rma_mdp/__pycache__/__init__.cpython-311.pyc
+	modified:   source/rma_mdp/rma_mdp/__pycache__/commands.cpython-311.pyc
+	modified:   source/rma_mdp/rma_mdp/__pycache__/curriculums.cpython-311.pyc
+	modified:   source/rma_mdp/rma_mdp/__pycache__/events.cpython-311.pyc
+	modified:   source/rma_mdp/rma_mdp/__pycache__/observations.cpython-311.pyc
+	modified:   source/rma_mdp/rma_mdp/__pycache__/rewards.cpython-311.pyc
+	modified:   source/rma_mdp/rma_mdp/__pycache__/terminations.cpython-311.pyc
+	modified:   source/rma_mdp/rma_mdp/__pycache__/terrains.cpython-311.pyc
+	modified:   source/rma_tasks/rma_tasks/rma/__pycache__/__init__.cpython-311.pyc
+	modified:   source/rma_tasks/rma_tasks/rma/config/__pycache__/__init__.cpython-311.pyc
+	modified:   source/rma_tasks/rma_tasks/rma/config/spot/__pycache__/__init__.cpython-311.pyc
+	modified:   source/rma_tasks/rma_tasks/rma/config/spot/__pycache__/flat_env_cfg.cpython-311.pyc
+	modified:   source/rma_tasks/rma_tasks/rma/config/spot/agents/__pycache__/__init__.cpython-311.pyc
+	modified:   source/rma_tasks/rma_tasks/rma/config/spot/agents/__pycache__/ppo_agent_cfg.cpython-311.pyc
+	modified:   source/rma_tasks/rma_tasks/rma/modules/__pycache__/__init__.cpython-311.pyc
+	modified:   source/rma_tasks/rma_tasks/rma/modules/__pycache__/base_policy.cpython-311.pyc
+	modified:   source/rma_tasks/rma_tasks/rma/runners/__pycache__/__init__.cpython-311.pyc
+	modified:   source/rma_tasks/rma_tasks/rma/runners/__pycache__/base_policy_runner.cpython-311.pyc
+	modified:   source/rma_tasks/rma_tasks/rma/wrappers/__pycache__/__init__.cpython-311.pyc
+	modified:   source/rma_tasks/rma_tasks/rma/wrappers/__pycache__/wrappers.cpython-311.pyc
+
+no changes added to commit (use "git add" and/or "git commit -a") 
+
+
+--- git diff ---
+diff --git a/scripts/__pycache__/cli_args.cpython-311.pyc b/scripts/__pycache__/cli_args.cpython-311.pyc
+index 693219a..2d3d52d 100644
+Binary files a/scripts/__pycache__/cli_args.cpython-311.pyc and b/scripts/__pycache__/cli_args.cpython-311.pyc differ
+diff --git a/source/rma_mdp/rma_mdp/__pycache__/__init__.cpython-311.pyc b/source/rma_mdp/rma_mdp/__pycache__/__init__.cpython-311.pyc
+index b244191..51bdac6 100644
+Binary files a/source/rma_mdp/rma_mdp/__pycache__/__init__.cpython-311.pyc and b/source/rma_mdp/rma_mdp/__pycache__/__init__.cpython-311.pyc differ
+diff --git a/source/rma_mdp/rma_mdp/__pycache__/commands.cpython-311.pyc b/source/rma_mdp/rma_mdp/__pycache__/commands.cpython-311.pyc
+index a4566e3..162239a 100644
+Binary files a/source/rma_mdp/rma_mdp/__pycache__/commands.cpython-311.pyc and b/source/rma_mdp/rma_mdp/__pycache__/commands.cpython-311.pyc differ
+diff --git a/source/rma_mdp/rma_mdp/__pycache__/curriculums.cpython-311.pyc b/source/rma_mdp/rma_mdp/__pycache__/curriculums.cpython-311.pyc
+index 4c5c89d..d46a63d 100644
+Binary files a/source/rma_mdp/rma_mdp/__pycache__/curriculums.cpython-311.pyc and b/source/rma_mdp/rma_mdp/__pycache__/curriculums.cpython-311.pyc differ
+diff --git a/source/rma_mdp/rma_mdp/__pycache__/events.cpython-311.pyc b/source/rma_mdp/rma_mdp/__pycache__/events.cpython-311.pyc
+index 2350912..2c71f62 100644
+Binary files a/source/rma_mdp/rma_mdp/__pycache__/events.cpython-311.pyc and b/source/rma_mdp/rma_mdp/__pycache__/events.cpython-311.pyc differ
+diff --git a/source/rma_mdp/rma_mdp/__pycache__/observations.cpython-311.pyc b/source/rma_mdp/rma_mdp/__pycache__/observations.cpython-311.pyc
+index 24d4df4..92256de 100644
+Binary files a/source/rma_mdp/rma_mdp/__pycache__/observations.cpython-311.pyc and b/source/rma_mdp/rma_mdp/__pycache__/observations.cpython-311.pyc differ
+diff --git a/source/rma_mdp/rma_mdp/__pycache__/rewards.cpython-311.pyc b/source/rma_mdp/rma_mdp/__pycache__/rewards.cpython-311.pyc
+index d78d44c..b54bbc0 100644
+Binary files a/source/rma_mdp/rma_mdp/__pycache__/rewards.cpython-311.pyc and b/source/rma_mdp/rma_mdp/__pycache__/rewards.cpython-311.pyc differ
+diff --git a/source/rma_mdp/rma_mdp/__pycache__/terminations.cpython-311.pyc b/source/rma_mdp/rma_mdp/__pycache__/terminations.cpython-311.pyc
+index a5dab99..1d30f94 100644
+Binary files a/source/rma_mdp/rma_mdp/__pycache__/terminations.cpython-311.pyc and b/source/rma_mdp/rma_mdp/__pycache__/terminations.cpython-311.pyc differ
+diff --git a/source/rma_mdp/rma_mdp/__pycache__/terrains.cpython-311.pyc b/source/rma_mdp/rma_mdp/__pycache__/terrains.cpython-311.pyc
+index 0abb106..cab5fca 100644
+Binary files a/source/rma_mdp/rma_mdp/__pycache__/terrains.cpython-311.pyc and b/source/rma_mdp/rma_mdp/__pycache__/terrains.cpython-311.pyc differ
+diff --git a/source/rma_tasks/rma_tasks/rma/__pycache__/__init__.cpython-311.pyc b/source/rma_tasks/rma_tasks/rma/__pycache__/__init__.cpython-311.pyc
+index 0b75d9a..6c14a4e 100644
+Binary files a/source/rma_tasks/rma_tasks/rma/__pycache__/__init__.cpython-311.pyc and b/source/rma_tasks/rma_tasks/rma/__pycache__/__init__.cpython-311.pyc differ
+diff --git a/source/rma_tasks/rma_tasks/rma/config/__pycache__/__init__.cpython-311.pyc b/source/rma_tasks/rma_tasks/rma/config/__pycache__/__init__.cpython-311.pyc
+index 231ad95..834b2bb 100644
+Binary files a/source/rma_tasks/rma_tasks/rma/config/__pycache__/__init__.cpython-311.pyc and b/source/rma_tasks/rma_tasks/rma/config/__pycache__/__init__.cpython-311.pyc differ
+diff --git a/source/rma_tasks/rma_tasks/rma/config/spot/__pycache__/__init__.cpython-311.pyc b/source/rma_tasks/rma_tasks/rma/config/spot/__pycache__/__init__.cpython-311.pyc
+index 181e5c4..86e5ffa 100644
+Binary files a/source/rma_tasks/rma_tasks/rma/config/spot/__pycache__/__init__.cpython-311.pyc and b/source/rma_tasks/rma_tasks/rma/config/spot/__pycache__/__init__.cpython-311.pyc differ
+diff --git a/source/rma_tasks/rma_tasks/rma/config/spot/__pycache__/flat_env_cfg.cpython-311.pyc b/source/rma_tasks/rma_tasks/rma/config/spot/__pycache__/flat_env_cfg.cpython-311.pyc
+index bc98ba2..d2dcb35 100644
+Binary files a/source/rma_tasks/rma_tasks/rma/config/spot/__pycache__/flat_env_cfg.cpython-311.pyc and b/source/rma_tasks/rma_tasks/rma/config/spot/__pycache__/flat_env_cfg.cpython-311.pyc differ
+diff --git a/source/rma_tasks/rma_tasks/rma/config/spot/agents/__pycache__/__init__.cpython-311.pyc b/source/rma_tasks/rma_tasks/rma/config/spot/agents/__pycache__/__init__.cpython-311.pyc
+index a98b947..11167fc 100644
+Binary files a/source/rma_tasks/rma_tasks/rma/config/spot/agents/__pycache__/__init__.cpython-311.pyc and b/source/rma_tasks/rma_tasks/rma/config/spot/agents/__pycache__/__init__.cpython-311.pyc differ
+diff --git a/source/rma_tasks/rma_tasks/rma/config/spot/agents/__pycache__/ppo_agent_cfg.cpython-311.pyc b/source/rma_tasks/rma_tasks/rma/config/spot/agents/__pycache__/ppo_agent_cfg.cpython-311.pyc
+index 91da054..d0f00b0 100644
+Binary files a/source/rma_tasks/rma_tasks/rma/config/spot/agents/__pycache__/ppo_agent_cfg.cpython-311.pyc and b/source/rma_tasks/rma_tasks/rma/config/spot/agents/__pycache__/ppo_agent_cfg.cpython-311.pyc differ
+diff --git a/source/rma_tasks/rma_tasks/rma/modules/__pycache__/__init__.cpython-311.pyc b/source/rma_tasks/rma_tasks/rma/modules/__pycache__/__init__.cpython-311.pyc
+index 78105e0..276b9d0 100644
+Binary files a/source/rma_tasks/rma_tasks/rma/modules/__pycache__/__init__.cpython-311.pyc and b/source/rma_tasks/rma_tasks/rma/modules/__pycache__/__init__.cpython-311.pyc differ
+diff --git a/source/rma_tasks/rma_tasks/rma/modules/__pycache__/base_policy.cpython-311.pyc b/source/rma_tasks/rma_tasks/rma/modules/__pycache__/base_policy.cpython-311.pyc
+index ec1a2ed..0870428 100644
+Binary files a/source/rma_tasks/rma_tasks/rma/modules/__pycache__/base_policy.cpython-311.pyc and b/source/rma_tasks/rma_tasks/rma/modules/__pycache__/base_policy.cpython-311.pyc differ
+diff --git a/source/rma_tasks/rma_tasks/rma/runners/__pycache__/__init__.cpython-311.pyc b/source/rma_tasks/rma_tasks/rma/runners/__pycache__/__init__.cpython-311.pyc
+index d29db30..6257085 100644
+Binary files a/source/rma_tasks/rma_tasks/rma/runners/__pycache__/__init__.cpython-311.pyc and b/source/rma_tasks/rma_tasks/rma/runners/__pycache__/__init__.cpython-311.pyc differ
+diff --git a/source/rma_tasks/rma_tasks/rma/runners/__pycache__/base_policy_runner.cpython-311.pyc b/source/rma_tasks/rma_tasks/rma/runners/__pycache__/base_policy_runner.cpython-311.pyc
+index 0a239c6..8b0a7a3 100644
+Binary files a/source/rma_tasks/rma_tasks/rma/runners/__pycache__/base_policy_runner.cpython-311.pyc and b/source/rma_tasks/rma_tasks/rma/runners/__pycache__/base_policy_runner.cpython-311.pyc differ
+diff --git a/source/rma_tasks/rma_tasks/rma/wrappers/__pycache__/__init__.cpython-311.pyc b/source/rma_tasks/rma_tasks/rma/wrappers/__pycache__/__init__.cpython-311.pyc
+index d9ea040..96d1216 100644
+Binary files a/source/rma_tasks/rma_tasks/rma/wrappers/__pycache__/__init__.cpython-311.pyc and b/source/rma_tasks/rma_tasks/rma/wrappers/__pycache__/__init__.cpython-311.pyc differ
+diff --git a/source/rma_tasks/rma_tasks/rma/wrappers/__pycache__/wrappers.cpython-311.pyc b/source/rma_tasks/rma_tasks/rma/wrappers/__pycache__/wrappers.cpython-311.pyc
+index bdf7077..f9efce5 100644
+Binary files a/source/rma_tasks/rma_tasks/rma/wrappers/__pycache__/wrappers.cpython-311.pyc and b/source/rma_tasks/rma_tasks/rma/wrappers/__pycache__/wrappers.cpython-311.pyc differ
