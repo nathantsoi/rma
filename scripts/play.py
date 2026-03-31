@@ -34,6 +34,13 @@ parser.add_argument(
     help="Use the pre-trained checkpoint from Nucleus.",
 )
 parser.add_argument("--real-time", action="store_true", default=False, help="Run in real-time, if possible.")
+parser.add_argument("--x", type=float, default=2.0, help="Camera x position")
+parser.add_argument("--y", type=float, default=2.0, help="Camera y position")
+parser.add_argument("--z", type=float, default=1.5, help="Camera z position")
+parser.add_argument("--origin_type", type=str, default="asset_root", help="Camera origin type")
+
+parser.add_argument("--teacher_model", type=str, default=None, help="Path to teacher model checkpoint for RMA2.")
+
 # append RSL-RL cli arguments
 cli_args.add_rsl_rl_args(parser)
 # append AppLauncher cli args
@@ -59,8 +66,8 @@ import time
 import torch
 
 # from rma_tasks.rma.config import spot
-from rsl_rl.runners import DistillationRunner, OnPolicyRunner
-from rma_tasks.rma.runners import BasePolicyRunner
+from rsl_rl.runners import OnPolicyRunner
+from rma_tasks.rma.runners import BasePolicyRunner, DistillationRunner
 
 from isaaclab.envs import (
     DirectMARLEnv,
@@ -92,6 +99,18 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
     # override configurations with non-hydra CLI arguments
     agent_cfg: RslRlBaseRunnerCfg = cli_args.update_rsl_rl_cfg(agent_cfg, args_cli)
     env_cfg.scene.num_envs = args_cli.num_envs if args_cli.num_envs is not None else env_cfg.scene.num_envs
+
+    if args_cli.teacher_model is not None:
+        agent_cfg.teacher.checkpoint_path = args_cli.teacher_model
+
+    # set the viewer
+    from isaaclab.envs import ViewerCfg
+    env_cfg.viewer = ViewerCfg(
+        eye=(args_cli.x, args_cli.y, args_cli.z),
+        origin_type=args_cli.origin_type,
+        env_index=0,
+        asset_name="robot"
+    )
 
     # set the environment seed
     # note: certain randomizations occur in the environment initialization so we set the seed here
@@ -141,7 +160,7 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
     if agent_cfg.class_name == "OnPolicyRunner":
         runner = BasePolicyRunner(env, agent_cfg.to_dict(), log_dir=log_dir, device=agent_cfg.device)
     elif agent_cfg.class_name == "DistillationRunner":
-        runner = DistillationRunner(env, agent_cfg.to_dict(), log_dir=None, device=agent_cfg.device)
+        runner = DistillationRunner(env, agent_cfg.to_dict(), log_dir=log_dir, device=agent_cfg.device)
     else:
         raise ValueError(f"Unsupported runner class: {agent_cfg.class_name}")
     runner.load(resume_path)

@@ -53,6 +53,7 @@ class Rma2PPORunnerCfg(RslRlOnPolicyRunnerCfg):
     experiment_name = "spot_rma"
     empirical_normalization = False
     store_code_state = False
+    class_name = "DistillationRunner"
     logger = "wandb"
     wandb_project = "Vision_RMA"
     obs_group = {"policy" : ["policy"], "priv_obs" : ["priv_obs"], "history" : ["history"], "critic" : ["policy"]}
