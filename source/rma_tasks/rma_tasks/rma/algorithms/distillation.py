@@ -10,6 +10,7 @@ from rsl_rl.storage import RolloutStorage
 from rsl_rl.utils import resolve_optimizer
 
 from rma_tasks.rma.modules import BasePolicy, AdaptationModule
+import torch.nn.functional as F  # Put this at the very top of distillation.py if it isn't there
 
 # teacher is really just the trained base policy + encoder being used to generate supervision for the adaptation module.
 class Distillation:
@@ -123,26 +124,37 @@ class Distillation:
     #     return teacher_action
 
     def act(self, obs):
-        """Forward pass for environment interaction (student + teacher)."""
-        # ---- Student actions..it uses teacher actor model given input as obs+z_hat ----
         actions = self.policy.act(obs)
         self.transition.actions = actions.detach()
+        
         with torch.no_grad():
-            # ---- Student latent ----
             self.transition.latents = self.policy.get_latents(obs).detach()
-            # ---- Teacher latent ----
+            
             priv_obs = self.teacher.get_encoder_obs(obs)
             actor_obs = self.teacher.get_actor_obs(obs)
             priv_input = self.teacher.encoder_obs_normalizer(priv_obs)
             teacher_latent = self.teacher.encoder(priv_input).detach()
+            # print("Teacher Latent Sum:", teacher_latent[0].abs().sum().item())
             self.transition.teacher_latents = teacher_latent
-            # ---- Teacher action...basically same as student action but need this since code was erroring out ----
+            
             actor_input = torch.cat([actor_obs, teacher_latent], dim=-1)
             privileged_action = self.teacher.actor(actor_input)
             self.transition.privileged_actions = privileged_action.detach()
-        # ---- Save observation ----
+            
+            # ==========================================
+            # DIAGNOSTIC PRINTS - ADD THESE HERE
+            # ==========================================
+            # if self.transition.observations is None: # Just print once per step
+            #     print("--- TEACHER VITALS ---")
+            #     print("1. Actor Obs Sum: ", actor_obs[0].abs().sum().item())
+            #     print("2. Priv Obs Sum:  ", priv_obs[0].abs().sum().item())
+            #     print("3. Teacher Action:", privileged_action[0].abs().sum().item())
+            #     print("----------------------")
+            
         self.transition.observations = obs
-        return self.transition.actions
+        
+        # Remember to keep returning the teacher's action!
+        return self.transition.privileged_actions
 
 
     
@@ -171,19 +183,47 @@ class Distillation:
         cnt = 0
 
         for epoch in range(self.num_learning_epochs):
-            # self.policy.reset(hidden_states=self.last_hidden_states)
-            # self.policy.detach_hidden_states()
             for obs, _, privileged_actions, dones in self.storage.generator():
 
-                # Get teacher latents (from privileged observations) - no gradients needed
+                # ==========================================
+                # THE FIX: Calculate Teacher latents the exact 
+                # same way we did in the act() function
+                # ==========================================
                 with torch.no_grad():
-                    teacher_latents = self.teacher.get_latents(obs).detach()
+                    priv_obs = self.teacher.get_encoder_obs(obs)
+                    # Apply the normalizer so the network isn't blinded!
+                    if hasattr(self.teacher, "encoder_obs_normalizer") and self.teacher.encoder_obs_normalizer is not None:
+                        priv_input = self.teacher.encoder_obs_normalizer(priv_obs)
+                    else:
+                        priv_input = priv_obs
+                        
+                    # Calculate the true teacher latent
+                    teacher_latents = self.teacher.encoder(priv_input).detach()
                 
                 # Get student latents (from history observations) - gradients needed for training
                 student_latents = self.policy.get_latents(obs) 
 
-                # behavior cloning loss
-                behavior_loss = self.loss_fn(student_latents, teacher_latents)
+                # behavior cloning loss (MSE)
+                # behavior_loss = self.loss_fn(student_latents, teacher_latents)
+                # ==========================================
+                # THE FIX: BOMB-PROOF THE LOSS
+                # ==========================================
+                # 1. Clamp the teacher's target just in case the buffer fed it garbage
+                safe_teacher_latents = torch.clamp(teacher_latents, min=-20.0, max=20.0)
+                
+                # 2. Use Smooth L1 (Huber) Loss so Batch 1 doesn't explode the network
+                behavior_loss = F.smooth_l1_loss(student_latents, safe_teacher_latents)
+
+                # ==========================================
+                # UPDATE VITALS DIAGNOSTIC
+                # ==========================================
+                if cnt == 0 and epoch == 0:
+                    print("--- UPDATE VITALS ---")
+                    print("1. Buffer Priv Obs Sum:     ", priv_obs[0].abs().sum().item())
+                    print("2. Buffer Teacher Latent Sum:", teacher_latents[0].abs().sum().item())
+                    print("3. Buffer Student Latent Sum:", student_latents[0].abs().sum().item())
+                    print("4. Starting MSE Loss:       ", behavior_loss.item())
+                    print("---------------------")
 
                 # total loss
                 loss = loss + behavior_loss
@@ -193,28 +233,22 @@ class Distillation:
                 # gradient step
                 self.optimizer.zero_grad()
                 loss.backward()
+                
                 if self.is_multi_gpu:
                     self.reduce_parameters()
                 if self.max_grad_norm:
                     nn.utils.clip_grad_norm_(self.policy.encoder.parameters(), self.max_grad_norm)
+                    
                 self.optimizer.step()
-                # self.policy.detach_hidden_states()
                 loss = 0
-
-                # # reset dones
-                # self.policy.reset(dones.view(-1))
-                # self.policy.detach_hidden_states(dones.view(-1))
 
         mean_behavior_loss /= cnt
         self.storage.clear()
-        # self.last_hidden_states = self.policy.get_hidden_states()
-        # self.policy.detach_hidden_states()
 
         # construct the loss dictionary
         loss_dict = {"behavior": mean_behavior_loss}
 
         return loss_dict
-
     """
     Helper functions
     """

@@ -299,7 +299,14 @@ class DistillationRunner(OnPolicyRunner):
         if "std" in loaded_dict["model_state_dict"]:
             self.alg.policy.std.data = loaded_dict["model_state_dict"]["std"]
             print(f"[INFO] Loaded std parameter from base policy.")
-        
+
+        for param in self.alg.policy.actor.parameters():
+            param.requires_grad = False
+            
+        # Optional but highly recommended: Freeze the teacher here too just in case!
+        for param in self.teacher.parameters():
+            param.requires_grad = False
+
         print(f"[INFO] Actor weights loaded from {path}. Encoder will be trained from scratch.")
     
     def load_teacher(self, checkpoint_path: str, map_location: str | None = None):

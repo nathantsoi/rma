@@ -81,12 +81,20 @@ from rma_utils.exports import export_policy_as_onnx, export_policy_as_jit
 
 from rma_tasks.rma.runners import DistillationRunner
 
+# Add imports for the Runner classes (assuming they exist in rma_tasks.rma.runners or similar)
+from rma_tasks.rma.runners import BasePolicyRunner  # Add this if not already imported
+
+# Define Runner with a default fallback to avoid NameError
 if args_cli.task == "RMA-Spot-v0":
     Runner = BasePolicyRunner
 elif args_cli.task == "RMA2-Spot-v0":
     Runner = DistillationRunner
 elif args_cli.task == "VRMA-Spot-v0":
     Runner = VrmaPolicyRunner
+else:
+    # Default fallback; adjust as needed
+    Runner = BasePolicyRunner
+    print("\033[93m[WARN] Unknown task; defaulting to BasePolicyRunner\033[0m")
 
 import rma_tasks  # noqa: F401
 import isaaclab_tasks
@@ -120,7 +128,7 @@ def pull_models_only():
         try:
             resume_path, env_cfg = pull_policy_from_wandb(export_dir, run_path, model_name)
             downloaded_count += 1
-            print(f"[92m[INFO] Successfully downloaded {model_name} to {os.path.dirname(resume_path)}")
+            print(f"\033[92m[INFO] Successfully downloaded {model_name} to {os.path.dirname(resume_path)}\033[0m")
             
             # Save env_cfg if it exists
             if env_cfg is not None:
@@ -128,16 +136,16 @@ def pull_models_only():
                 cfg_save_path = os.path.join(model_file_dir, "env_cfg.json")
                 with open(cfg_save_path, "w") as fp:
                     json.dump(env_cfg, fp, indent=4)
-                print(f"[92m[INFO] Saved env_cfg.json")
+                print(f"\033[92m[INFO] Saved env_cfg.json\033[0m")
         except Exception as e:
             print(
-                f"\nm[WARN] Unable to download from Weights and Biases: {str(e)}"
+                f"\033[93m[WARN] Unable to download from Weights and Biases: {str(e)}\033[0m"
             )
     
     if downloaded_count > 0:
-        print(f"\n[92m[INFO] Downloaded {downloaded_count} model(s) to {export_dir}")
+        print(f"\033[92m[INFO] Downloaded {downloaded_count} model(s) to {export_dir}\033[0m")
     else:
-        print("\n[93m[INFO] No models were downloaded")
+        print("\033[93m[INFO] No models were downloaded\033[0m")
 
 
 def convert_policy():
@@ -191,11 +199,11 @@ def convert_policy():
                     if os.path.exists(resume_path):
                         env_cfg = cli_args.load_local_cfg(resume_path)
                         policy_list.append(tuple([resume_path, env_cfg]))
-                        print(f"[92m\n[INFO] added policy to conversion queue of length {len(policy_list)}")
+                        print(f"\033[92m[INFO] added policy to conversion queue of length {len(policy_list)}\033[0m")
                     else:
                         print(
-                            "\nm[WARN] Got invalid file path, unable to add selected file to conversion"
-                            " queue!"
+                            "\033[93m[WARN] Got invalid file path, unable to add selected file to conversion"
+                            " queue!\033[0m"
                         )
                 break
             case "2":
@@ -213,20 +221,20 @@ def convert_policy():
                     try:
                         resume_path, env_cfg = pull_policy_from_wandb(export_dir, run_path, model_name)
                         
-                        # Save env_cfg as YAML
+                        # Save env_cfg as YAML (consistent with WandB mode)
                         if env_cfg is not None:
                             model_file_dir = os.path.dirname(resume_path)
                             cfg_save_path = os.path.join(model_file_dir, "env_cfg.yaml")
                             with open(cfg_save_path, "w") as fp:
                                 yaml.dump(env_cfg, fp, default_flow_style=False, indent=2)
-                            print(f"[92m[INFO] Saved env_cfg.yaml")
+                            print(f"\033[92m[INFO] Saved env_cfg.yaml\033[0m")
 
                         policy_list.append(tuple([resume_path, env_cfg]))
-                        print(f"[92m\n[INFO] added policy to conversion queue of length {len(policy_list)}")
+                        print(f"\033[92m[INFO] added policy to conversion queue of length {len(policy_list)}\033[0m")
                     except Exception:
                         print(
-                            "\nm[WARN] Unable to download from Weights and Biases for conversion, is the path"
-                            " and filename correct?"
+                            "\033[93m[WARN] Unable to download from Weights and Biases for conversion, is the path"
+                            " and filename correct?\033[0m"
                         )
                 break
 
@@ -243,6 +251,7 @@ def convert_policy():
         log_root_path = os.path.join("logs", "rsl_rl", agent_cfg.experiment_name)
         log_root_path = os.path.abspath(log_root_path)
 
+        teacher_path = None  # Initialize to avoid NameError
         if args_cli.actor_model == "wandb":
             # load configuration
             run_path = args_cli.wandb_run
@@ -250,9 +259,9 @@ def convert_policy():
             teacher_path, _ = load_wandb_policy(run_path, model_name, log_root_path)
             agent_cfg.teacher.checkpoint_path = teacher_path
 
-
         ppo_runner = Runner(env, agent_cfg.to_dict(), device=agent_cfg.device)
-        ppo_runner.load_baseActor_policy(teacher_path)
+        if teacher_path is not None:  # Only call if teacher_path is set
+            ppo_runner.load_baseActor_policy(teacher_path)
 
         #obs = torch.zeros(1, 51, device=agent_cfg.device)
         #image_obs = torch.zeros(1, 2, 53, 30, device=agent_cfg.device)
@@ -261,19 +270,20 @@ def convert_policy():
         ppo_runner.load(resume_path, load_optimizer=False)
 
         export_model_dir = os.path.join(model_file_dir, f"{model_file_name}_deployment")
-        os.makedirs(export_model_dir)
+        os.makedirs(export_model_dir, exist_ok=True)  # Added exist_ok to avoid errors if dir exists
         print(f"[INFO]: Saving env config json file to {export_model_dir}")
         cfg_save_path = os.path.join(export_model_dir, "env_cfg.json")
-        # with open(cfg_save_path, "w") as fp:
-        #     json.dump(env_cfg, fp, indent=4)
+        if env_cfg is not None:  # Ensure env_cfg exists before saving
+            with open(cfg_save_path, "w") as fp:
+                json.dump(env_cfg, fp, indent=4)
         if args_cli.onnx:
             print(f"[INFO]: Saving policy onnx file to {export_model_dir}")
             export_policy_as_onnx(ppo_runner.alg.policy, export_model_dir, filename=f"{model_file_name}.onnx")
-        elif args_cli.jit:
+        elif args.cli.jit:
             print(f"[INFO]: Saving policy jit file to {export_model_dir}")
-            export_policy_as_jit(ppo_runner.alg.policy, normalizer=None, path=export_model_dir, filename=f"{model_file_name}.jit", alg=args_cli.alg)
+            export_policy_as_jit(ppo_runner.alg.policy, normalizer=None, path=export_model_dir, filename=f"{model_file_name}.jit", alg=args.cli.alg)
     if len(policy_list) > 0:
-        print(f"\n[92m[INFO] Exported {len(policy_list)} policy(ies) to {export_dir}")
+        print(f"\033[92m[INFO] Exported {len(policy_list)} policy(ies) to {export_dir}\033[0m")
 
 
 if __name__ == "__main__":
